@@ -20,14 +20,19 @@ pertenecientes a diferentes terminales son cortadas (este es la famosa parte del
 la separacion de las partes de la imagen.
 """
 img = cv2.imread("imagenes/estatua.jpg")
+# Creamos una mascara con ceros que tenga la mis aforma que la imagen que hemos cargado
 mask = np.zeros(img.shape[:2], np.uint8)
 
 bgdModel = np.zeros((1,65), np.float64)
 fgdModel = np.zeros((1,65), np.float64)
-
+# rectangulo en el que definimos la imagen que queremos obtener
 rect = (100,50,421,378)
+# El numero 5 es el numero de iteraciones
 cv2.grabCut(img, mask, rect, bgdModel, fgdModel, 5, cv2.GC_INIT_WITH_RECT)
 
+# Despues nuestra mask tendra ahora valores entre 0 y 3. Los valores 0 y 2 se convertiran en 0 y el 1-3 en 1, y estos
+# seran guardados en mask2 y hacemos uso de un "filtro" que teóricamente dejara el primer plano que queremos intacto,
+# aunque vemos que aun asi hay fallos en la segmentacion de la imagen
 mask2 = np.where((mask==2) | (mask==0), 0,1).astype('uint8')
 img = img*mask2[:,:,np.newaxis]
 
